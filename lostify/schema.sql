@@ -1,0 +1,67 @@
+PRAGMA foreign_keys = ON;
+
+DROP TABLE IF EXISTS awaitOTP;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS profiles;
+DROP TABLE IF EXISTS posts;
+DROP TABLE IF EXISTS confirmations;
+
+-- Table of users awaiting OTP
+CREATE TABLE awaitOTP (
+    username    TEXT PRIMARY KEY NOT NULL,          -- The email address is then username@iitk.ac.in
+    password    TEXT NOT NULL,
+    otp         INTEGER NOT NULL,                   -- The OTP sent to username@iitk.ac.in
+    created     INTEGER NOT NULL,                   -- Time of generation of OTP (Unix timestamp)
+    profile     TEXT NOT NULL                       -- Profile details as JSON
+) WITHOUT ROWID, STRICT;
+
+-- Table of registered users
+CREATE TABLE users (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    username    TEXT UNIQUE NOT NULL,               -- The email address is then username@iitk.ac.in
+    password    TEXT NOT NULL,
+    role        INTEGER NOT NULL,                   -- 0 for student, 1 for admin
+    counter     INTEGER NOT NULL DEFAULT 0,         -- Number of failed login attempts
+    lastAttempt INTEGER                             -- Time of last unsuccessful login attempt (Unix timestamp)
+) STRICT;
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_users_username ON users (username);
+
+-- Table of profile details
+CREATE TABLE profiles (
+    userid      INTEGER PRIMARY KEY,                -- The user id of the user in users table
+    name        TEXT NOT NULL,
+    phone       TEXT,
+    email       TEXT,
+    address     TEXT,
+    designation TEXT,
+    roll        INTEGER UNIQUE,                     -- Roll number of the user
+    image       BLOB,
+    FOREIGN KEY (userid) REFERENCES users (id) ON DELETE CASCADE
+) WITHOUT ROWID, STRICT;
+
+-- Table of posts
+CREATE TABLE posts (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    type        INTEGER NOT NULL,           -- 0 for lost, 1 for found
+    creator     INTEGER NOT NULL,           -- User id of the post creator
+    title       TEXT NOT NULL,              -- Post title
+    description TEXT,                       -- Post description
+    location    TEXT NOT NULL,              -- Location of find/loss,
+    image       BLOB,                       -- Image of post
+    date        INTEGER NOT NULL,           -- Date of post creation
+    closedBy    INTEGER,                    -- User id of claimant
+    closedDate  INTEGER,                    -- Date of closing post
+    reportCount INTEGER DEFAULT 0,          -- Count of reports
+    FOREIGN KEY (creator) REFERENCES users (id),
+    FOREIGN KEY (closedBy) REFERENCES users (id)
+) STRICT;
+
+CREATE TABLE confirmations (
+    postid    INTEGER NOT NULL,             -- Id of the post
+    initid    INTEGER NOT NULL,             -- User id of the initiator
+    otherid   INTEGER NOT NULL,             -- User id of the user yet tp confirm
+    FOREIGN KEY (postid) REFERENCES posts (id) ON DELETE CASCADE,
+    FOREIGN KEY (initid) REFERENCES users (id) ON DELETE CASCADE,
+    FOREIGN KEY (otherid) REFERENCES users (id) ON DELETE CASCADE,
+) STRICT;
