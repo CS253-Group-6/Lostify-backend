@@ -38,7 +38,7 @@ CREATE TABLE profiles (
     roll        INTEGER UNIQUE,                     -- Roll number of the user
     image       BLOB,
     FOREIGN KEY (userid) REFERENCES users (id) ON DELETE CASCADE
-) WITHOUT ROWID, STRICT;
+) STRICT;
 
 -- Table of posts
 CREATE TABLE posts (
@@ -47,7 +47,7 @@ CREATE TABLE posts (
     creator     INTEGER NOT NULL,           -- User id of the post creator
     title       TEXT NOT NULL,              -- Post title
     description TEXT,                       -- Post description
-    location    TEXT NOT NULL,              -- Location of find/loss,
+    location    TEXT NOT NULL,              -- Location of find/loss
     image       BLOB,                       -- Image of post
     date        INTEGER NOT NULL,           -- Date of post creation
     closedBy    INTEGER,                    -- User id of claimant
@@ -57,11 +57,20 @@ CREATE TABLE posts (
     FOREIGN KEY (closedBy) REFERENCES users (id)
 ) STRICT;
 
+CREATE TABLE reports (
+    postid    INTEGER NOT NULL,             -- Id of the post
+    userid    INTEGER NOT NULL,             -- User id of the reporter
+    PRIMARY KEY (postid, userid),
+    FOREIGN KEY (postid) REFERENCES posts (id) ON DELETE CASCADE,
+    FOREIGN KEY (userid) REFERENCES users (id)
+) WITHOUT ROWID, STRICT;
+
 CREATE TABLE confirmations (
     postid    INTEGER NOT NULL,             -- Id of the post
     initid    INTEGER NOT NULL,             -- User id of the initiator
-    otherid   INTEGER NOT NULL,             -- User id of the user yet tp confirm
+    otherid   INTEGER NOT NULL,             -- User id of the user yet to confirm
+    PRIMARY KEY (postid, initid) ON CONFLICT REPLACE,
     FOREIGN KEY (postid) REFERENCES posts (id) ON DELETE CASCADE,
     FOREIGN KEY (initid) REFERENCES users (id) ON DELETE CASCADE,
-    FOREIGN KEY (otherid) REFERENCES users (id) ON DELETE CASCADE,
-) STRICT;
+    FOREIGN KEY (otherid) REFERENCES users (id) ON DELETE CASCADE
+) WITHOUT ROWID, STRICT;
