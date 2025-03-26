@@ -28,13 +28,20 @@ def get_otp():
 
     if request.method == 'POST':
         # The signup details are transmitted through POST
-        username: str   = request.json["username"]      # Username
-        password: str   = request.json["password"]      # Plaintext password
+        try:
+            username: str   = request.json["username"]      # Username
+            password: str   = request.json["password"]      # Plaintext password
 
-        # If the request is sent through Basic Auth, use the following:
-        # username: str = request.authorization["username"]   # Username
-        # password: int = request.authorization["password"]   # Password
-        profile : dict  = request.json["profile"]       # Profile details (as a `dict`)
+            # If the request is sent through Basic Auth, use the following:
+            # username: str = request.authorization["username"]   # Username
+            # password: int = request.authorization["password"]   # Password
+            profile : dict  = request.json["profile"]       # Profile details (as a `dict`)
+        except KeyError as e:
+            # HTTP 400: Bad Request
+            return ({
+                "error": "Bad Request",
+                "message": f"Field '{e.args[0]}' is required"
+            }, 400)
 
         # Check types to validate request
         if (
@@ -160,12 +167,19 @@ def verify_otp():
 
     if request.method == 'POST':
         # The otp is transmitted through POST
-        username: str = request.json["username"]        # Username
-        otp     : int = request.json["otp"]             # OTP
+        try:
+            username: str = request.json["username"]        # Username
+            otp     : int = request.json["otp"]             # OTP
 
-        # If the request is sent through Basic Auth, use the following:
-        # username: str = request.authorization["username"]   # Username
-        # otp     : int = request.authorization["otp"]        # OTP
+            # If the request is sent through Basic Auth, use the following:
+            # username: str = request.authorization["username"]   # Username
+            # otp     : int = request.authorization["otp"]        # OTP
+        except KeyError as e:
+            # HTTP 400: Bad Request
+            return ({
+                "error": "Bad Request",
+                "message": f"Field '{e.args[0]}' is required"
+            }, 400)
 
         # Check types to validate request
         if type(username) is not str or type(otp) is not int:
@@ -289,13 +303,20 @@ def login():
     """
 
     if request.method == 'POST':
-        # The login credentials are transmitted through POST
-        username: str = request.json["username"]
-        password: str = request.json["password"]
+        try:
+            # The login credentials are transmitted through POST
+            username: str = request.json["username"]
+            password: str = request.json["password"]
 
-        # If the request is sent through Basic Auth, use the following:
-        # username: str = request.authorization["username"]   # Username
-        # password: int = request.authorization["password"]   # Password
+            # If the request is sent through Basic Auth, use the following:
+            # username: str = request.authorization["username"]   # Username
+            # password: int = request.authorization["password"]   # Password
+        except KeyError as e:
+            # HTTP 400: Bad Request
+            return ({
+                "error": "Bad Request",
+                "message": f"Field '{e.args[0]}' is required"
+            }, 400)
 
         # Retrieve the connection to the database
         db = get_db()
