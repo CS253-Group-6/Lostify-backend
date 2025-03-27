@@ -229,7 +229,7 @@ def verify_otp():
             # HTTP 401: Unauthorized
             return ({
                 "error": "Unauthorized",
-                "message": "Username not found"
+                "message": "Incorrect OTP"
             }, 401, {
                 "WWW-Authenticate": "Basic"     # Relevant only if the request was sent through Basic Auth
             })
@@ -366,7 +366,7 @@ def login():
             # HTTP 401: Unauthorized
             return ({
                 "error": "Unauthorized",
-                "message": "Username not found"
+                "message": "Incorrect password"
             }, 401, {
                 "WWW-Authenticate": "Basic"     # Relevant only if the request was sent through Basic Auth
             })
