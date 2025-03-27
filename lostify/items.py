@@ -253,6 +253,64 @@ def post_actions(id: int):
         }, 405, {
             "Allow": ["GET", "PUT", "DELETE"]
         })
+
+@items_bp.route('/all', methods = ('GET',))
+def get_all():
+    """
+    Retrieve all posts.
+    """
+
+    if g.user_id is None:
+        # HTTP 401: Unauthorized
+        return ({
+            "error": "Unauthorized",
+            "message": "User not logged in"
+        }, 401, {
+            "WWW-Authenticate": "Basic"     # Relevant only if the request was sent through Basic Auth
+        })
+    
+    if request.method == 'GET':
+        db = get_db()
+        rows = db.execute(
+            "SELECT "
+                "id,"
+                "title,"
+                "creator,"
+                "description,"
+                "date,"
+                "location,"
+                "type,"
+                "closedBy,"
+                "closedDate,"
+                "image"
+                " FROM posts"
+        ).fetchall()
+
+        # HTTP 200: OK
+        return ({
+            'posts': [
+                {
+                    'id': row['id'],
+                    'title': row['title'],
+                    'location': row['location'],
+                    'date': row['date'],
+                    'image': row['image'],
+                    'type': row['type'],
+                    'creator': row['creator'],
+                    'description': row['description'],
+                    'closedBy': row['closedBy'],
+                    'closedDate': row['closedDate']
+                } for row in rows
+            ]
+        }, 200)
+
+    # HTTP 405: Method Not Allowed
+    return ({
+        "error": "Method Not Allowed",
+        "message": request.method
+    }, 405, {
+        "Allow": ["GET"]
+    })
         
 # Claim an item (post) by searching its id or scrolling through the found section
 @items_bp.route('/<int:id>/claim', methods = ('POST',))
