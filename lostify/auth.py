@@ -156,7 +156,7 @@ def get_otp():
         "error": "Method Not Allowed",
         "message": request.method
     }, 405, {
-        "Allow": "POST"
+        "Allow": ["POST"]
     })
 
 @auth_bp.route('/signup/verify_otp', methods = ('POST',))
@@ -293,7 +293,7 @@ def verify_otp():
         "error": "Method Not Allowed",
         "message": request.method
     }, 405, {
-        "Allow": "POST"
+        "Allow": ["POST"]
     })
 
 @auth_bp.route('/login', methods = ('POST',))
@@ -391,7 +391,7 @@ def login():
         "error": "Method Not Allowed",
         "message": request.method
     }, 405, {
-        "Allow": "POST"
+        "Allow": ["POST"]
     }) 
 
 # Called before every handling request dispatched to the app.
@@ -488,5 +488,5 @@ def change_password():
         "error": "Method Not Allowed",
         "message": request.method
     }, 405, {
-        "Allow": "POST"
+        "Allow": ["POST"]
     })
