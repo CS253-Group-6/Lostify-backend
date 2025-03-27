@@ -222,7 +222,7 @@ def verify_otp():
             # HTTP 404: Not Found
             return ({
                 "error": "Not Found",
-                "message": "Username not found"
+                "message": "OTP timed out"
             }, 404)
         
         if row['otp'] != otp:
