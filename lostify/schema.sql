@@ -35,7 +35,7 @@ CREATE TABLE profiles (
     email       TEXT,
     address     TEXT,
     designation TEXT,
-    roll        INTEGER UNIQUE,                     -- Roll number of the user
+    roll        INTEGER UNIQUE NOT NULL,            -- Roll number of the user
     image       BLOB,
     FOREIGN KEY (userid) REFERENCES users (id) ON DELETE CASCADE
 ) STRICT;
