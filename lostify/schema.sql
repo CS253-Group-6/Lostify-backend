@@ -47,7 +47,8 @@ CREATE TABLE posts (
     creator     INTEGER NOT NULL,           -- User id of the post creator
     title       TEXT NOT NULL,              -- Post title
     description TEXT,                       -- Post description
-    location    TEXT NOT NULL,              -- Location of find/loss
+    location1   TEXT NOT NULL,              -- Coarse location of find/loss
+    location2   TEXT,                       -- Fine location of find/loss
     image       BLOB,                       -- Image of post
     date        INTEGER NOT NULL,           -- Date of post creation
     closedBy    INTEGER,                    -- User id of claimant
