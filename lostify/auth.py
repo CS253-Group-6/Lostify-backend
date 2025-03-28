@@ -6,7 +6,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from .db import get_db
 from .otp_sender import send_otp
 
-from random import SystemRandom
+from secrets import SystemRandom
 from datetime import datetime, timedelta
 import json
 
