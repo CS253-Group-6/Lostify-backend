@@ -53,7 +53,7 @@ CREATE TABLE posts (
     date        INTEGER NOT NULL,           -- Date of post creation
     closedBy    INTEGER,                    -- User id of claimant
     closedDate  INTEGER,                    -- Date of closing post
-    reportCount INTEGER DEFAULT 0,          -- Count of reports
+    reportCount INTEGER NOT NULL DEFAULT 0, -- Count of reports
     FOREIGN KEY (creator) REFERENCES users (id),
     FOREIGN KEY (closedBy) REFERENCES users (id)
 ) STRICT;
