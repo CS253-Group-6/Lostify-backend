@@ -12,8 +12,8 @@ def send_otp(otp: int, email: str, recipient_display_name: str):
         message = {
             "content": {
                 "subject": "Test Email",
-                "plainText": f"Test content (plaintext): {str(otp).zfill(6)}",
-                "html": f"<html><h1>Test content (<i>HTML</i>): {str(otp).zfill(6)}</h1></html>"
+                "plainText": f"LOSTIFY\n----------\nOTP for signup: {str(otp).zfill(6)}",
+                "html": f"<html><h1>Lostify</hi><p>OTP for signup: {str(otp).zfill(6)}</html>"
             },
             "recipients": {
                 "to": [
