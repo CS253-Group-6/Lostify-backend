@@ -2,9 +2,9 @@ from flask import (
     Blueprint, g, request, url_for
 )
 
-from .db import get_db
-
 from datetime import datetime
+
+from .db import get_db
 
 items_bp = Blueprint('items', __name__, url_prefix='/items')
 
@@ -28,7 +28,8 @@ def post():
             type        : int = request.json['type']
             title       : str = request.json['title']
             description : str = request.json.get('description')
-            location    : str = request.json['location']
+            location1   : str = request.json['location1']
+            location2   : str = request.json.get('location2')
             image       : str = request.json.get('image')
         except KeyError as e:
             # HTTP 400: Bad Request
@@ -41,8 +42,8 @@ def post():
 
         if not title:
             error = 'Item name is required.'
-        elif not location:
-            error = 'Location is required.' 
+        elif not location1:
+            error = 'Location 1 is required.' 
         elif type not in (0, 1):
             error = 'Type must be either 0 or 1.'   
 
@@ -62,10 +63,11 @@ def post():
                 'description,'
                 'image,'
                 'type,'
-                'location,'
+                'location1,'
+                'location2,'
                 'date'
                 ') VALUES (?, ?, ?, ?, ?, ?, ?)',
-            (title, g.user_id, description, image, type, location, int(datetime.now().timestamp()))
+            (title, g.user_id, description, image, type, location1, location2, int(datetime.now().timestamp()))
         )
         db.commit()
         post_id = db.execute('SELECT last_insert_rowid()').fetchone()[0]
@@ -106,7 +108,8 @@ def get(id: int):
             "creator,"
             "description,"
             "date,"
-            "location,"
+            "location1,"
+            "location2,"
             "type,"
             "closedBy,"
             "closedDate,"
@@ -126,7 +129,8 @@ def get(id: int):
     return ({
         'id': id,
         'title': row['title'],
-        'location': row['location'],
+        'location1': row['location1'],
+        'location2': row['location2'],
         'date': row['date'],
         'image': row['image'],
         'type': row['type'],
@@ -160,16 +164,17 @@ def put(id: int):
     title: str = request.json.get('title')
     description: str = request.json.get('description')
     image: str = request.json.get('image')
-    location: str = request.json.get('location')
+    location1: str = request.json.get('location1')
+    location2: str = request.json.get('location2')
 
     error = None
 
-    if title is description is image is location is None:
+    if title is description is image is location1 is location2 is None:
         error = 'No fields to update.'
     elif not title and title is not None:
         error = 'Item name is required.'
-    elif not location and location is not None:
-        error = 'Location is required.'
+    elif not location1 and location1 is not None:
+        error = 'Location 1 is required.'
 
     if error is not None:
         # HTTP 400: Bad Request
@@ -185,9 +190,10 @@ def put(id: int):
             + ('title = ?,' if title is not None else '')
             + ('description = ?,' if description is not None else '')
             + ('image = ?,' if image is not None else '')
-            + ('location = ?,' if location is not None else ''))[:-1]
+            + ('location1 = ?,' if location1 is not None else ''))[:-1]
+            + ('location2 = ?,' if location2 is not None else '')[:-1]
             + ' WHERE id = ?',
-            tuple(x for x in (title, description, image, location, id) if x is not None)
+            tuple(x for x in (title, description, image, location1, location2, id) if x is not None)
         )
         db.commit()
         
@@ -278,7 +284,8 @@ def get_all():
                 "creator,"
                 "description,"
                 "date,"
-                "location,"
+                "location1,"
+                "location2,"
                 "type,"
                 "closedBy,"
                 "closedDate,"
@@ -292,7 +299,8 @@ def get_all():
                 {
                     'id': row['id'],
                     'title': row['title'],
-                    'location': row['location'],
+                    'location1': row['location1'],
+                    'location2': row['location2'],
                     'date': row['date'],
                     'image': row['image'],
                     'type': row['type'],
