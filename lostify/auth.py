@@ -5,8 +5,9 @@ from flask import (
 from werkzeug.security import check_password_hash, generate_password_hash
 from .db import get_db
 from .otp_sender import send_otp
+from .password_sender import send_password
 
-from secrets import SystemRandom
+from secrets import SystemRandom, token_urlsafe
 from datetime import datetime, timedelta
 import json
 
@@ -477,6 +478,67 @@ def change_password():
         db.execute(
             "UPDATE users SET password = ? WHERE id = ?",
             (generate_password_hash(new_password), g.user_id)
+        )
+        db.commit()
+
+        # HTTP 204: No Content
+        return ('', 204)
+        
+    # HTTP 405: Method Not Allowed
+    return ({
+        "error": "Method Not Allowed",
+        "message": request.method
+    }, 405, {
+        "Allow": ["POST"]
+    })
+
+@auth_bp.route('/reset_password', methods = ('POST',))
+def reset_password():
+    """
+    Reset the account password.
+    """
+
+    if request.method == 'POST':
+        # The login credentials are transmitted through POST
+        username: str = request.json["username"]
+
+        # Retrieve the connection to the database
+        db = get_db()
+        error = None    # Error message
+
+        if not username:
+            error = "Username is required."
+
+        if error is not None:
+            # HTTP 400: Bad Request
+            return ({
+                "error": "Bad Request",
+                "message": error
+            }, 400)
+
+        # Fetch records from the database
+        row = db.execute(
+            "SELECT id FROM users WHERE username = ?", (username,)
+        ).fetchone()
+
+        if row is None:
+            # HTTP 404: Not Found
+            return ({
+                "error": "Not Found",
+                "message": "Username not found"
+            }, 404)
+        
+        name = db.execute(
+            "SELECT username FROM profiles WHERE userid = ?", (row[0],)
+        ).fetchone()[0]
+        new_password = token_urlsafe(12)  # Generate a new password
+
+        send_password(new_password, f'{username}@iitk.ac.in', name)
+
+        # Update database
+        db.execute(
+            "UPDATE users SET password = ? WHERE userid = ?",
+            (generate_password_hash(new_password), row[0])
         )
         db.commit()
 
