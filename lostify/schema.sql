@@ -58,6 +58,7 @@ CREATE TABLE posts (
     FOREIGN KEY (closedBy) REFERENCES users (id)
 ) STRICT;
 
+-- Table of reported posts
 CREATE TABLE reports (
     postid    INTEGER NOT NULL,             -- Id of the post
     userid    INTEGER NOT NULL,             -- User id of the reporter
@@ -66,6 +67,7 @@ CREATE TABLE reports (
     FOREIGN KEY (userid) REFERENCES users (id)
 ) WITHOUT ROWID, STRICT;
 
+-- Table of post confirmations
 CREATE TABLE confirmations (
     postid    INTEGER NOT NULL,             -- Id of the post
     initid    INTEGER NOT NULL,             -- User id of the initiator
