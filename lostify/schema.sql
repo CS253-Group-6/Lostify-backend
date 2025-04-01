@@ -22,7 +22,7 @@ CREATE TABLE users (
     password    TEXT NOT NULL,
     role        INTEGER NOT NULL,                   -- 0 for student, 1 for admin
     counter     INTEGER NOT NULL DEFAULT 0,         -- Number of failed login attempts
-    lastAttempt INTEGER                             -- Time of last unsuccessful login attempt (Unix timestamp)
+    lastAttempt INTEGER DEFAULT 0                   -- Time of last unsuccessful login attempt (Unix timestamp)
 ) STRICT;
 
 CREATE UNIQUE INDEX IF NOT EXISTS idx_users_username ON users (username);
