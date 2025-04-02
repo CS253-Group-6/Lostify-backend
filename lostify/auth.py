@@ -59,9 +59,6 @@ def get_otp():
             ) or type(profile.get("roll")) is not int
             or (profile.get("image") is not None and type(profile["image"]) is not str)
         ):
-            # raise TypeError(
-            #     "Signup: Type mismatch for JSON field(s) in POST request"
-            # )
             # HTTP 400: Bad Request
             return ({
                 "error": "Bad Request",
@@ -113,7 +110,7 @@ def get_otp():
             }, 409)
         
         # Generate otp
-        otp = SystemRandom().randrange(1000000)
+        otp = SystemRandom().randrange(10000)
 
         # Send otp
         # If OTP sending fails, a RuntimeError is raised.
