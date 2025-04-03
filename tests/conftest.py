@@ -5,6 +5,9 @@ import pytest
 from lostify import create_app
 from lostify.db import get_db, init_db
 
+from flask import Flask
+from flask.testing import FlaskClient
+
 with open(os.path.join(os.path.dirname(__file__), 'data.sql'), 'rb') as f:
     _data_sql = f.read().decode('utf8')
 
@@ -32,7 +35,7 @@ def app():
     os.unlink(db_path)
 
 @pytest.fixture
-def client(app):
+def client(app: Flask):
     """
     A test client for the app.
     """
@@ -40,19 +43,19 @@ def client(app):
     return app.test_client()
 
 @pytest.fixture
-def runner(app):
+def runner(app: Flask):
     """
     A test cli runner for the app.
     """
     
     return app.test_cli_runner()
 
-class AuthActions(object):
+class AuthActions:
     """
     Helper class for authentication actions.
     This class provides methods to log in and log out users.
     """
-    def __init__(self, client):
+    def __init__(self, client: FlaskClient):
         self._client = client
 
     def login(self, username='test', password='test'):
