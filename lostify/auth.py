@@ -344,20 +344,31 @@ def login():
                 "message": "Username not found"
             }, 404)
         
-        if row["counter"] >= 5 and datetime.now() - datetime.fromtimestamp(row["lastAttempt"]) < LOGIN_COUNTER_RESET_DELAY:
-            # HTTP 429: Too Many Requests
-            return ({
-                "error": "Too Many Requests",
-                "message": "Login attempt limit reached"
-            }, 429, {
-                "Retry-After": int((LOGIN_COUNTER_RESET_DELAY - (datetime.now() - datetime.fromtimestamp(row["lastAttempt"]))).total_seconds())
-            })
+        counter = row["counter"]
+        
+        if row["counter"] >= 5:
+            if datetime.now() - datetime.fromtimestamp(row["lastAttempt"]) < LOGIN_COUNTER_RESET_DELAY:
+                # HTTP 429: Too Many Requests
+                return ({
+                    "error": "Too Many Requests",
+                    "message": "Login attempt limit reached"
+                }, 429, {
+                    "Retry-After": int((LOGIN_COUNTER_RESET_DELAY - (datetime.now() - datetime.fromtimestamp(row["lastAttempt"]))).total_seconds())
+                })
+            else:
+                # Reset counter
+                db.execute(
+                    "UPDATE users SET counter = 0 WHERE username = ?",
+                    (username,)
+                )
+                db.commit()
+                counter = 0
 
         if not check_password_hash(row["password"], password):
             # Incorrect password; increment counter for failed attempts
             db.execute(
-                "UPDATE users SET counter = ? WHERE username = ?",
-                (row["counter"] + 1, username)
+                "UPDATE users SET counter = ?, lastAttempt = ? WHERE username = ?",
+                (counter + 1, int(datetime.now().timestamp()), username)
             )
             db.commit()
 
