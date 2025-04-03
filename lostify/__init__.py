@@ -42,4 +42,7 @@ def create_app(test_config = None):
     from . import items
     app.register_blueprint(items.items_bp)
 
+    from . import users
+    app.register_blueprint(users.users_bp)
+
     return app
