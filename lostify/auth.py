@@ -392,7 +392,9 @@ def login():
 
         # HTTP 200: OK
         return ({
-            "message": "User authenticated"
+            "message": "User authenticated",
+            "id": row["id"],
+            "role": row["role"],            # 0 for normal user, 1 for admin
         }, 200)
         
     # HTTP 405: Method Not Allowed

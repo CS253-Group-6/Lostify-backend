@@ -20,7 +20,7 @@ CREATE TABLE users (
     id          INTEGER PRIMARY KEY AUTOINCREMENT,
     username    TEXT UNIQUE NOT NULL,               -- The email address is then username@iitk.ac.in
     password    TEXT NOT NULL,
-    role        INTEGER NOT NULL,                   -- 0 for student, 1 for admin
+    role        INTEGER NOT NULL,                   -- 0 for normal user, 1 for admin
     counter     INTEGER NOT NULL DEFAULT 0,         -- Number of failed login attempts
     lastAttempt INTEGER DEFAULT 0                   -- Time of last unsuccessful login attempt (Unix timestamp)
 ) STRICT;
