@@ -1,29 +1,27 @@
 from azure.communication.email import EmailClient
 from dotenv import dotenv_values
 
-POLLER_WAIT_TIME = 10   # seconds
+POLLER_WAIT_TIME = 10  # seconds
+
 
 def send_otp(otp: int, email: str, recipient_display_name: str):
     try:
-        env = dotenv_values(".env", verbose = True)
+        env = dotenv_values(".env", verbose=True)
 
-        email_client = EmailClient.from_connection_string(env['AZURE_CONNECTION_STRING'])
+        email_client = EmailClient.from_connection_string(
+            env["AZURE_CONNECTION_STRING"]
+        )
 
         message = {
             "content": {
                 "subject": "Test Email",
-                "plainText": f"LOSTIFY\n----------\nOTP for signup: {str(otp).zfill(6)}",
-                "html": f"<html><h1>Lostify</h1><p>OTP for signup: <b>{str(otp).zfill(6)}</b></html>"
+                "plainText": f"LOSTIFY\n----------\nOTP for signup: {str(otp).zfill(4)}",
+                "html": f"<html><h1>Lostify</h1><p>OTP for signup: <b>{str(otp).zfill(4)}</b></html>",
             },
             "recipients": {
-                "to": [
-                    {
-                        "address": email,
-                        "displayName": recipient_display_name
-                    }
-                ]
+                "to": [{"address": email, "displayName": recipient_display_name}]
             },
-            "senderAddress": env['AZURE_SENDER_EMAIL']
+            "senderAddress": env["AZURE_SENDER_EMAIL"],
         }
 
         poller = email_client.begin_send(message)
@@ -39,10 +37,12 @@ def send_otp(otp: int, email: str, recipient_display_name: str):
                 raise TimeoutError("Polling timed out.")
 
         if poller.result()["status"] == "Succeeded":
-            print(f"Successfully sent the email (operation id: {poller.result()['id']})")
+            print(
+                f"Successfully sent the email (operation id: {poller.result()['id']})"
+            )
         else:
             raise RuntimeError(str(poller.result()["error"]))
     except Exception as ex:
-        print('Exception: ')
+        print("Exception: ")
         print(ex)
         raise ex
