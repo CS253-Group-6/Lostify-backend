@@ -10,13 +10,14 @@
             "request": "launch",
             "module": "flask",
             "env": {
-                "FLASK_APP": "lostify\\__init__.py",
+                "FLASK_APP": "lostify/__init__.py",
                 "FLASK_DEBUG": "1"
             },
             "args": [
                 "run",
                 "--no-debugger",
-                "--no-reload"
+                "--no-reload",
+                "--host=0.0.0.0"
             ],
             "jinja": true,
             "autoStartBrowser": false
