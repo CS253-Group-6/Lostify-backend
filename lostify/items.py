@@ -54,6 +54,9 @@ def post():
                 "message": error
             }, 400)
         
+        if image is not None:
+            image = bytes(image, 'utf-8')
+        
         db = get_db()
 
         db.execute(
@@ -66,7 +69,7 @@ def post():
                 'location1,'
                 'location2,'
                 'date'
-                ') VALUES (?, ?, ?, ?, ?, ?, ?)',
+                ') VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
             (title, g.user_id, description, image, type, location1, location2, int(datetime.now().timestamp()))
         )
         db.commit()
@@ -74,7 +77,8 @@ def post():
         
         # HTTP 201: Created
         return ({
-            "message": "Post created successfully"
+            "message": "Post created successfully",
+            "id": post_id
         }, 201, {
             "Location": f"{url_for(f'.post_actions', id = post_id)}"
         })
@@ -154,7 +158,19 @@ def put(id: int):
             "WWW-Authenticate": "Basic"     # Relevant only if the request was sent through Basic Auth
         })
     
-    if g.user_id != id:
+    db = get_db()
+    row = db.execute(
+        "SELECT creator FROM posts WHERE id = ?", (id,)
+    ).fetchone()
+
+    if row is None:
+        # HTTP 404: Not Found
+        return ({
+            "error": "Not Found",
+            "message": "Post not found"
+        }, 404)
+    
+    if g.user_id != row[0]:
         # HTTP 403: Forbidden
         return ({
             "error": "Forbidden",
@@ -183,15 +199,16 @@ def put(id: int):
             "message": error
         }, 400)
     else:
-        db = get_db()
-
+        if image is not None:
+            image = bytes(image, 'utf-8')
+            
         db.execute(
             ('UPDATE posts SET '
             + ('title = ?,' if title is not None else '')
             + ('description = ?,' if description is not None else '')
             + ('image = ?,' if image is not None else '')
-            + ('location1 = ?,' if location1 is not None else ''))[:-1]
-            + ('location2 = ?,' if location2 is not None else '')[:-1]
+            + ('location1 = ?,' if location1 is not None else '')
+            + ('location2 = ?,' if location2 is not None else ''))[:-1]
             + ' WHERE id = ?',
             tuple(x for x in (title, description, image, location1, location2, id) if x is not None)
         )

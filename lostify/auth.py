@@ -249,6 +249,11 @@ def verify_otp():
                 (username,)
             ).fetchone()['id']
 
+            image = profile.get('image')
+            if image is not None:
+                # Convert image to bytes
+                image = bytes(image, 'utf-8')
+
             db.execute(
                 "INSERT INTO profiles(userid, name, phone, email, address, designation, roll, image) "
                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
@@ -260,7 +265,7 @@ def verify_otp():
                     profile.get('address'),
                     profile.get('designation'),
                     profile['roll'],
-                    profile.get('image')
+                    image
                 )
             )
 
