@@ -539,15 +539,15 @@ def reset_password():
             }, 404)
         
         name = db.execute(
-            "SELECT username FROM profiles WHERE userid = ?", (row[0],)
+            "SELECT name FROM profiles WHERE userid = ?", (row[0],)
         ).fetchone()[0]
-        new_password = token_urlsafe(12)  # Generate a new password
+        new_password = token_urlsafe(12)  # Generate a new password (16 chars)
 
         send_password(new_password, f'{username}@iitk.ac.in', name)
 
         # Update database
         db.execute(
-            "UPDATE users SET password = ? WHERE userid = ?",
+            "UPDATE users SET password = ? WHERE id = ?",
             (generate_password_hash(new_password), row[0])
         )
         db.commit()
