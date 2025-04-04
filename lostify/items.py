@@ -136,7 +136,7 @@ def get(id: int):
         'location1': row['location1'],
         'location2': row['location2'],
         'date': row['date'],
-        'image': row['image'],
+        'image': None if row['image'] is None else row['image'].decode('utf-8'),
         'type': row['type'],
         'creator': row['creator'],
         'description': row['description'],
@@ -201,7 +201,7 @@ def put(id: int):
     else:
         if image is not None:
             image = bytes(image, 'utf-8')
-            
+
         db.execute(
             ('UPDATE posts SET '
             + ('title = ?,' if title is not None else '')
@@ -319,7 +319,7 @@ def get_all():
                     'location1': row['location1'],
                     'location2': row['location2'],
                     'date': row['date'],
-                    'image': row['image'],
+                    'image': None if row['image'] is None else row['image'].decode('utf-8'),
                     'type': row['type'],
                     'creator': row['creator'],
                     'description': row['description'],

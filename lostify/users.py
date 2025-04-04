@@ -87,8 +87,12 @@ def profile(id: int):
                 "message": "User not found"
             }), 404
 
+        body = dict(row)
+        if row['image'] is not None:
+            row['image'].decode('utf-8'),
+        
         # HTTP 200: OK
-        return (dict(row), 200)
+        return (body, 200)
     
     # HTTP 405: Method Not Allowed
     return ({
