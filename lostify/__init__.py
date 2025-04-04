@@ -45,4 +45,14 @@ def create_app(test_config = None):
     from . import users
     app.register_blueprint(users.users_bp)
 
+
+    # Uncomment the following lines if you are using a
+    # reverse proxy (like Nginx) in front of your Flask app
+    #
+    # from werkzeug.middleware.proxy_fix import ProxyFix
+    #
+    # app.wsgi_app = ProxyFix(
+    #     app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1
+    # )
+
     return app

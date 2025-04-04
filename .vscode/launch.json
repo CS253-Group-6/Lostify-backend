@@ -16,7 +16,8 @@
             "args": [
                 "run",
                 "--no-debugger",
-                "--no-reload"
+                "--no-reload",
+                // "--cert=adhoc"      // Uncomment to handle HTTPS connections
             ],
             "jinja": true,
             "autoStartBrowser": false
