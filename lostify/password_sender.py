@@ -11,9 +11,9 @@ def send_password(password: int, email: str, recipient_display_name: str):
 
         message = {
             "content": {
-                "subject": "Test Email",
-                "plainText": f"LOSTIFY\n----------\nYour new password is: {password}\nPlease change this password after login.",
-                "html": f"<html><h1>Lostify</h1><p>Your new password is: <code>{password}</code><p>Please change this password after login.</html>"
+                "subject": "Lostify: Reset password",
+                "plainText": f"LOSTIFY\n----------\nYour new password is: {password}\nPlease change this password upon login.",
+                "html": f"<html><h1>Lostify</h1><p>Your new password is: <code>{password}</code><p>Please change this password upon login.</html>"
             },
             "recipients": {
                 "to": [
