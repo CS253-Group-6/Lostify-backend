@@ -1,5 +1,5 @@
 import pytest
-from flask import Flask, g, session
+from flask import Flask
 from flask.testing import FlaskClient
 from werkzeug.security import check_password_hash
 from lostify.db import get_db
