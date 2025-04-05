@@ -306,6 +306,7 @@ def get_all():
                 "type,"
                 "closedBy,"
                 "closedDate,"
+                "reportCount,"
                 "image"
                 " FROM posts"
         ).fetchall()
@@ -324,7 +325,8 @@ def get_all():
                     'creator': row['creator'],
                     'description': row['description'],
                     'closedBy': row['closedBy'],
-                    'closedDate': row['closedDate']
+                    'closedDate': row['closedDate'],
+                    'reportCount': row['reportCount']
                 } for row in rows
             ]
         }, 200)
