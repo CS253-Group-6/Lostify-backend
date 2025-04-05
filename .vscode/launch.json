@@ -17,7 +17,7 @@
                 "run",
                 "--no-debugger",
                 "--no-reload",
-                "--cert=adhoc"      // Uncomment to handle HTTPS connections
+                // "--cert=adhoc"      // Uncomment to handle HTTPS connections
             ],
             "jinja": true,
             "autoStartBrowser": false
