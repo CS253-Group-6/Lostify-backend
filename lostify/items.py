@@ -268,14 +268,14 @@ def post_actions(id: int):
         return put(id)
     elif request.method == 'DELETE':
         return delete(id)
-    else:
-        # HTTP 405: Method Not Allowed
-        return ({
-            "error": "Method Not Allowed",
-            "message": request.method
-        }, 405, {
-            "Allow": ["GET", "PUT", "DELETE"]
-        })
+    # else:
+    #     # HTTP 405: Method Not Allowed
+    #     return ({
+    #         "error": "Method Not Allowed",
+    #         "message": request.method
+    #     }, 405, {
+    #         "Allow": ["GET", "PUT", "DELETE"]
+    #     })
 
 @items_bp.route('/all', methods = ('GET',))
 def get_all():
@@ -329,13 +329,13 @@ def get_all():
             ]
         }, 200)
 
-    # HTTP 405: Method Not Allowed
-    return ({
-        "error": "Method Not Allowed",
-        "message": request.method
-    }, 405, {
-        "Allow": ["GET"]
-    })
+    # # HTTP 405: Method Not Allowed
+    # return ({
+    #     "error": "Method Not Allowed",
+    #     "message": request.method
+    # }, 405, {
+    #     "Allow": ["GET"]
+    # })
         
 # Claim an item (post) by searching its id or scrolling through the found section
 @items_bp.route('/<int:id>/claim', methods = ('POST',))
@@ -451,13 +451,13 @@ def claim(id: int):
                         'creator': otherid
                     }, 200)
 
-    # HTTP 405: Method Not Allowed
-    return ({
-        "error": "Method Not Allowed",
-        "message": request.method
-    }, 405, {
-        "Allow": ["POST"]
-    })
+    # # HTTP 405: Method Not Allowed
+    # return ({
+    #     "error": "Method Not Allowed",
+    #     "message": request.method
+    # }, 405, {
+    #     "Allow": ["POST"]
+    # })
         
 @items_bp.route("/<int:id>/report", methods=('GET', 'PUT', 'DELETE'))
 def report_post(id: int):
@@ -527,10 +527,10 @@ def report_post(id: int):
         # HTTP 204: No content
         return ('', 204)
     
-    # HTTP 405: Method Not Allowed
-    return ({
-        "error": "Method Not Allowed",
-        "message": request.method
-    }, 405, {
-        "Allow": ["GET", "PUT", "DELETE"]
-    })
+    # # HTTP 405: Method Not Allowed
+    # return ({
+    #     "error": "Method Not Allowed",
+    #     "message": request.method
+    # }, 405, {
+    #     "Allow": ["GET", "PUT", "DELETE"]
+    # })

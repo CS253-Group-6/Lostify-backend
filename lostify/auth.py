@@ -149,13 +149,13 @@ def get_otp():
             "Location": f"{url_for('auth.verify_otp')}"
         })
 
-    # HTTP 405: Method Not Allowed
-    return ({
-        "error": "Method Not Allowed",
-        "message": request.method
-    }, 405, {
-        "Allow": ["POST"]
-    })
+    # # HTTP 405: Method Not Allowed
+    # return ({
+    #     "error": "Method Not Allowed",
+    #     "message": request.method
+    # }, 405, {
+    #     "Allow": ["POST"]
+    # })
 
 @auth_bp.route('/signup/verify_otp', methods = ('POST',))
 def verify_otp():
@@ -402,13 +402,13 @@ def login():
             "role": row["role"],            # 0 for normal user, 1 for admin
         }, 200)
         
-    # HTTP 405: Method Not Allowed
-    return ({
-        "error": "Method Not Allowed",
-        "message": request.method
-    }, 405, {
-        "Allow": ["POST"]
-    }) 
+    # # HTTP 405: Method Not Allowed
+    # return ({
+    #     "error": "Method Not Allowed",
+    #     "message": request.method
+    # }, 405, {
+    #     "Allow": ["POST"]
+    # }) 
 
 # Called before every handling request dispatched to the app.
 @auth_bp.before_app_request
@@ -499,13 +499,13 @@ def change_password():
         # HTTP 204: No Content
         return ('', 204)
         
-    # HTTP 405: Method Not Allowed
-    return ({
-        "error": "Method Not Allowed",
-        "message": request.method
-    }, 405, {
-        "Allow": ["POST"]
-    })
+    # # HTTP 405: Method Not Allowed
+    # return ({
+    #     "error": "Method Not Allowed",
+    #     "message": request.method
+    # }, 405, {
+    #     "Allow": ["POST"]
+    # })
 
 @auth_bp.route('/reset_password', methods = ('POST',))
 def reset_password():
@@ -560,10 +560,10 @@ def reset_password():
         # HTTP 204: No Content
         return ('', 204)
         
-    # HTTP 405: Method Not Allowed
-    return ({
-        "error": "Method Not Allowed",
-        "message": request.method
-    }, 405, {
-        "Allow": ["POST"]
-    })
+    # # HTTP 405: Method Not Allowed
+    # return ({
+    #     "error": "Method Not Allowed",
+    #     "message": request.method
+    # }, 405, {
+    #     "Allow": ["POST"]
+    # })

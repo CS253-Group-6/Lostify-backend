@@ -3,7 +3,8 @@ INSERT INTO users (id, username, password, role) VALUES
     (1, 'other', 'pbkdf2:sha256:50000$kJPKsz6N$d2d4784f1b030a9761f5ccaeeaca413f27f2ecb76d6168407af962ddce849f79', 1);
 
 INSERT INTO profiles (userid, name, phone, email, address, designation, roll) VALUES
-    (0, 'test_name', '123', 'test@example.com', '10 Downing Street', 'Student', 23829);
+    (0, 'test_name', '123', 'test@example.com', '10 Downing Street', 'Student', 23829),
+    (1, 'other_name', '456', 'other@example.com', '221 Baker Street', 'Faculty', 21355);
 
 INSERT INTO posts (id, type, title, description, location1, creator, date) VALUES
     (0, 0, 'Test Post', 'This is a test post.', 'a', 0, 1743769999),

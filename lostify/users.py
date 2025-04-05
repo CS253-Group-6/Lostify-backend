@@ -1,10 +1,9 @@
 from flask import Blueprint, request, g
 from .db import get_db
 
-users_bp = Blueprint("users", __name__, url_prefix="/users")
+users_bp = Blueprint("users", __name__, url_prefix = "/users")
 
-
-@users_bp.route("/<int:id>/profile", methods=("PUT", "GET"))
+@users_bp.route("/<int:id>/profile", methods = ("PUT", "GET"))
 def profile(id: int):
     """
     Update a user profile."
@@ -13,26 +12,28 @@ def profile(id: int):
 
     if g.user_id is None:
         # HTTP 401: Unauthorized
-        return (
-            {"error": "Unauthorized", "message": "User not logged in"},
-            401,
-            {
-                "WWW-Authenticate": "Basic"  # Relevant only if the request was sent through Basic Auth
-            },
-        )
+        return ({
+            "error": "Unauthorized",
+            "message": "User not logged in"
+        }, 401, {
+            "WWW-Authenticate": "Basic"  # Relevant only if the request was sent through Basic Auth
+        })
 
     if request.method == "PUT":
         # Only the user associated with the profile can update it
         if g.user_id != id:
             # HTTP 403: Forbidden
-            return (
-                {"error": "Forbidden", "message": "Profile does not belong to user"},
-                403,
-            )
+            return ({
+                "error": "Forbidden",
+                "message": "Profile does not belong to user"
+            }, 403)
 
         if not request.json:
             # HTTP 400: Bad Request
-            return ({"error": "Bad Request", "message": "No fields being updated"}, 400)
+            return ({
+                "error": "Bad Request",
+                "message": "No fields being updated"
+            }, 400)
 
         name: str = request.json.get("name")
         phone: str = request.json.get("phone")
@@ -47,9 +48,15 @@ def profile(id: int):
         if not name and name is not None:
             error = "Name is required"
 
+        if name is None and phone is None and email is None and address is None and designation is None and roll is None and image is None:
+            error = "At least one field is required"
+
         if error is not None:
             # HTTP 400: Bad Request
-            return ({"error": "Bad Request", "message": error}, 400)
+            return ({
+                "error": "Bad Request",
+                "message": error
+            }, 400)
 
         db = get_db()
 
@@ -74,7 +81,7 @@ def profile(id: int):
             )
 
         # HTTP 204: No Content
-        return ("", 204)
+        return ('', 204)
 
     if request.method == "GET":
         # Any user can view any profile
@@ -84,7 +91,10 @@ def profile(id: int):
 
         if row is None:
             # HTTP 404: Not Found
-            return ({"error": "Not Found", "message": "User not found"}), 404
+            return ({
+                "error": "Not Found",
+                "message": "User not found"
+            }, 404)
 
         body = dict(row)
         if body["image"] is not None:
@@ -93,9 +103,10 @@ def profile(id: int):
         # HTTP 200: OK
         return (body, 200)
 
-    # HTTP 405: Method Not Allowed
-    return (
-        {"error": "Method Not Allowed", "message": request.method},
-        405,
-        {"Allow": ["GET", "PUT"]},
-    )
+    # # HTTP 405: Method Not Allowed
+    # return ({
+    #     "error": "Method Not Allowed",
+    #     "message": request.method
+    # }, 405, {
+    #     "Allow": ["GET", "PUT"]
+    # })

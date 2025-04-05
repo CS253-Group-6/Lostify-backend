@@ -49,24 +49,3 @@ def runner(app: Flask):
     """
     
     return app.test_cli_runner()
-
-class AuthActions:
-    """
-    Helper class for authentication actions.
-    This class provides methods to log in and log out users.
-    """
-    def __init__(self, client: FlaskClient):
-        self._client = client
-
-    def login(self, username='test', password='test'):
-        return self._client.post(
-            '/auth/login',
-            json = {'username': username, 'password': password}
-        )
-
-    def logout(self):
-        return self._client.get('/auth/logout')
-
-@pytest.fixture
-def auth(client):
-    return AuthActions(client)

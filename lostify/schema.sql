@@ -4,6 +4,7 @@ DROP TABLE IF EXISTS awaitOTP;
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS profiles;
 DROP TABLE IF EXISTS posts;
+DROP TABLE IF EXISTS reports;
 DROP TABLE IF EXISTS confirmations;
 
 -- Table of users awaiting OTP
