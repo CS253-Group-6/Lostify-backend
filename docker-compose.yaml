@@ -1,0 +1,23 @@
+version: "3"
+services:
+  web:
+    # Give your image a static name
+    image: lostify/flask-factory:v2
+
+    # Give your container a static name
+    container_name: flask-factory
+
+    build:
+      # Explicitly show docker-cli where your Dockerfile lies
+      context: ./
+
+      # Explicitly state the name of your dockerfile
+      dockerfile: Dockerfile
+
+    # Env file
+    env_file:
+      - .env
+      
+    # Expose ports
+    ports:
+      - 8000:8000
