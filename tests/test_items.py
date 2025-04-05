@@ -268,6 +268,32 @@ def test_delete(client: FlaskClient, app: Flask):
 
     assert response.status_code == 403
 
+def test_retrieve_all(client: FlaskClient):
+    # Test retrieving all items without authentication
+    response = client.get('/items/all')
+
+    assert response.status_code == 401
+
+    # Authenticate
+    cookie = client.post(
+        '/auth/login',
+        json = {
+            'username': 'test',
+            'password': 'test'
+        }
+    ).headers['Set-Cookie']
+
+    # Test retrieving all items
+    response = client.get(
+        '/items/all',
+        headers = {
+            'Cookie': cookie
+        }
+    )
+
+    assert response.status_code == 200
+    assert type(response.json['posts']) is list  # Should return a list of items
+
 def test_report_post(client: FlaskClient, app: Flask):
     # Test reporting a post without authentication
     response = client.put('/items/2/report')
