@@ -31,6 +31,14 @@ jobs:
       
       - name: Install dependencies
         run: pip install -r requirements.txt
+
+      - name: Create .env file
+        run: |
+          touch .env
+          echo "FLASK_SECRET_KEY=${{ secrets.FLASK_SECRET_KEY }}" > .env
+          echo "FLASK_DB_NAME=${{ vars.FLASK_DB_NAME }}" >> .env
+          echo "AZURE_CONNECTION_STRING=${{ secrets.AZURE_CONNECTION_STRING }}" >> .env
+          echo "AZURE_SENDER_EMAIL=${{ vars.AZURE_SENDER_EMAIL }}" >> .env
         
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
 
