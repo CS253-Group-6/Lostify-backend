@@ -55,8 +55,10 @@ def get_otp():
                 is type(profile.get("phone"))
                 is type(profile.get("address"))
                 is type(profile.get("designation"))
+                is type(profile.get("playerId"))
                 is str
             ) or type(profile.get("roll")) is not int
+            or type(profile.get("online")) is not bool
             or (profile.get("image") is not None and type(profile["image"]) is not str)
         ):
             # HTTP 400: Bad Request
@@ -267,7 +269,7 @@ def verify_otp():
                     profile['roll'],
                     image,
                     profile.get('playerId'),
-                    profile.get('online')
+                    profile['online']
                 )
             )
 
@@ -293,13 +295,13 @@ def verify_otp():
         # NOTE: The client is required to login after this step. Signing up
         #       does not automatically log the user in or create a session.
 
-    # HTTP 405: Method Not Allowed
-    return ({
-        "error": "Method Not Allowed",
-        "message": request.method
-    }, 405, {
-        "Allow": ["POST"]
-    })
+    # # HTTP 405: Method Not Allowed
+    # return ({
+    #     "error": "Method Not Allowed",
+    #     "message": request.method
+    # }, 405, {
+    #     "Allow": ["POST"]
+    # })
 
 @auth_bp.route('/login', methods = ('POST',))
 def login():
