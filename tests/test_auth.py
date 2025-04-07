@@ -7,34 +7,34 @@ from lostify.auth import LOGIN_COUNTER_RESET_DELAY
 from time import sleep
 
 def test_signup_get_otp(client: FlaskClient, app: Flask):
-    # NOTE: This test is commented out because it sends an actual email.
+    # NOTE: This test may be commented out because it sends an actual email.
     #       This may consume email resources.
-    pass
+    # pass
 
-#     response = client.post(
-#         '/auth/signup/get_otp',
-#         json = {
-#             'username': 'uname',
-#             'password': 'pass',
-#             'profile': {
-#                 'name': 'First M. Last',
-#                 'email': 'uname25@example.com',
-#                 'phone': '+91 12345 67890',
-#                 'address': '123 Main St., City, Country',
-#                 'designation': 'Student',
-#                 'roll': 124
-#             }
-#         }
-#     )
+    response = client.post(
+        '/auth/signup/get_otp',
+        json = {
+            'username': 'uname',
+            'password': 'pass',
+            'profile': {
+                'name': 'First M. Last',
+                'email': 'uname25@example.com',
+                'phone': '+91 12345 67890',
+                'address': '123 Main St., City, Country',
+                'designation': 'Student',
+                'roll': 124
+            }
+        }
+    )
 
-#     assert response.status_code == 201
-#     assert response.json['email'] == 'uname@iitk.ac.in'
-#     assert response.headers['Location'] == '/auth/signup/verify_otp'
+    assert response.status_code == 201
+    assert response.json['email'] == 'uname@iitk.ac.in'
+    assert response.headers['Location'] == '/auth/signup/verify_otp'
 
-#     with app.app_context():
-#         assert get_db().execute(
-#             "SELECT * FROM awaitOTP WHERE username = 'uname'",
-#         ).fetchone() is not None
+    with app.app_context():
+        assert get_db().execute(
+            "SELECT * FROM awaitOTP WHERE username = 'uname'",
+        ).fetchone() is not None
 
 @pytest.mark.parametrize(('username', 'password', 'profile', 'status'), (
     ('', '', {}, 400),
@@ -56,6 +56,89 @@ def test_signup_get_otp_validate_input(client: FlaskClient, username, password, 
     )
 
     assert response.status_code == status
+
+def test_signup_verify_otp(client: FlaskClient, app: Flask):
+    # Test with bad requests
+    response = client.post(
+        '/auth/signup/verify_otp',
+        json = {
+            'username': 'new'
+        }
+    )
+
+    assert response.status_code == 400
+
+    response = client.post(
+        '/auth/signup/verify_otp',
+        json = {
+            'otp': 17
+        }
+    )
+
+    assert response.status_code == 400
+
+    response = client.post(
+        '/auth/signup/verify_otp',
+        json = {
+            'username': 'new',
+            'otp': '0017'
+        }
+    )
+
+    assert response.status_code == 400
+
+    # Test with outdated OTP
+    response = client.post(
+        '/auth/signup/verify_otp',
+        json = {
+            'username': 'new',
+            'otp': 827
+        }
+    )
+
+    assert response.status_code == 404
+
+    # Update OTP send time
+    with app.app_context():
+        from datetime import datetime
+        get_db().execute(
+            "UPDATE awaitOTP SET created = ? WHERE username = 'new'",
+            (int(datetime.now().timestamp()),)
+        )
+        get_db().commit()
+
+    # Test with invalid username
+    response = client.post(
+        '/auth/signup/verify_otp',
+        json = {
+            'username': 'another',
+            'otp': 9248
+        }
+    )
+
+    assert response.status_code == 404
+
+    # Test with incorrect OTP
+    response = client.post(
+        '/auth/signup/verify_otp',
+        json = {
+            'username': 'new',
+            'otp': 9248
+        }
+    )
+
+    assert response.status_code == 401
+
+    # Test with correct OTP
+    response = client.post(
+        '/auth/signup/verify_otp',
+        json = {
+            'username': 'new',
+            'otp': 827
+        }
+    )
+
+    assert response.status_code == 201
 
 def test_login(client: FlaskClient, app: Flask):
     response = client.post(
@@ -186,18 +269,18 @@ def test_change_password(client: FlaskClient, app: Flask):
     assert response.status_code == 401
 
 def test_reset_password(client: FlaskClient):
-    # NOTE: This test is commented out because it sends an actual email.
+    # NOTE: This test may be commented out because it sends an actual email.
     #       This may consume email resources.
-    pass
+    # pass
 
-    # response = client.post(
-    #     '/auth/reset_password',
-    #     json = {
-    #         'username': 'test'
-    #     }
-    # )
+    response = client.post(
+        '/auth/reset_password',
+        json = {
+            'username': 'test'
+        }
+    )
 
-    # assert response.status_code == 204
+    assert response.status_code == 204
 
 def test_reset_password_validate_input(client: FlaskClient):
     response = client.post(
