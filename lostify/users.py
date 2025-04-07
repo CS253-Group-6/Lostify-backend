@@ -110,3 +110,48 @@ def profile(id: int):
     # }, 405, {
     #     "Allow": ["GET", "PUT"]
     # })
+
+@users_bp.route("/<int:id>/online", methods = ("PUT",))
+def online(id: int):
+    if g.user_id is None:
+        # HTTP 401: Unauthorized
+        return ({
+            "error": "Unauthorized",
+            "message": "User not logged in"
+        }, 401, {
+            "WWW-Authenticate": "Basic"  # Relevant only if the request was sent through Basic Auth
+        })
+
+    if request.method == "PUT":
+        # Only the user associated with the profile can update it
+        if g.user_id != id:
+            # HTTP 403: Forbidden
+            return ({
+                "error": "Forbidden",
+                "message": "Profile does not belong to user"
+            }, 403)
+
+        status: bool = request.json.get("status")        
+
+        error = None
+
+        if not isinstance(status, bool):
+            error = "Boolean field 'status' is required"
+
+        if error is not None:
+            # HTTP 400: Bad Request
+            return ({
+                "error": "Bad Request",
+                "message": error
+            }, 400)
+
+        db = get_db()
+
+        with db:
+            db.execute(
+                "UPDATE profiles SET online = ? WHERE userid = ?",
+                (int(status), id),
+            )
+
+        # HTTP 204: No Content
+        return ('', 204)

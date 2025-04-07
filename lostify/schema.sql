@@ -40,6 +40,8 @@ CREATE TABLE profiles (
     designation TEXT,
     roll        INTEGER UNIQUE NOT NULL,            -- Roll number of the user
     image       BLOB,
+    playerId    TEXT,                               -- Token for push notifications
+    online      INTEGER NOT NULL,                   -- 0 for offline, 1 for online
     FOREIGN KEY (userid) REFERENCES users (id) ON DELETE CASCADE
 ) STRICT;
 
@@ -53,7 +55,7 @@ CREATE TABLE posts (
     location1   TEXT NOT NULL,              -- Coarse location of find/loss
     location2   TEXT,                       -- Fine location of find/loss
     image       BLOB,                       -- Image of post
-    date        INTEGER NOT NULL,           -- Date of post creation
+    date        INTEGER NOT NULL,           -- Date of loss/find
     closedBy    INTEGER,                    -- User id of claimant
     closedDate  INTEGER,                    -- Date of closing post
     reportCount INTEGER NOT NULL DEFAULT 0, -- Count of reports
