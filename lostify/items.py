@@ -25,12 +25,13 @@ def post():
 
     if request.method == 'POST':
         try:
-            type        : int = request.json['type']
+            posttype    : int = request.json['type']
             title       : str = request.json['title']
             description : str = request.json.get('description')
             location1   : str = request.json['location1']
             location2   : str = request.json.get('location2')
             image       : str = request.json.get('image')
+            date        : int = request.json['date']
         except KeyError as e:
             # HTTP 400: Bad Request
             return ({
@@ -44,8 +45,17 @@ def post():
             error = 'Item name is required.'
         elif not location1:
             error = 'Location 1 is required.' 
-        elif type not in (0, 1):
-            error = 'Type must be either 0 or 1.'   
+        elif posttype not in (0, 1):
+            error = 'Type must be either 0 or 1.'
+        elif (
+            type(title) is not str
+            or type(description) not in (str, type(None))
+            or type(image) not in (str, type(None))
+            or type(location1) is not str
+            or type(location2) not in (str, type(None))
+            or type(date) is not int
+        ):
+            error = "Type mismatch for JSON field(s) in POST request"
 
         if error is not None:
             # HTTP 400: Bad Request
@@ -63,14 +73,14 @@ def post():
             'INSERT INTO posts ('
                 'title,'
                 'creator,'
+                'date,'
                 'description,'
                 'image,'
                 'type,'
                 'location1,'
-                'location2,'
-                'date'
+                'location2'
                 ') VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-            (title, g.user_id, description, image, type, location1, location2, int(datetime.now().timestamp()))
+            (title, g.user_id, date, description, image, posttype, location1, location2)
         )
         db.commit()
         post_id = db.execute('SELECT last_insert_rowid()').fetchone()[0]
@@ -83,13 +93,13 @@ def post():
             "Location": f"{url_for(f'.post_actions', id = post_id)}"
         })
     
-    # HTTP 405: Method Not Allowed
-    return ({
-        "error": "Method Not Allowed",
-        "message": request.method
-    }, 405, {
-        "Allow": ["POST"]
-    })
+    # # HTTP 405: Method Not Allowed
+    # return ({
+    #     "error": "Method Not Allowed",
+    #     "message": request.method
+    # }, 405, {
+    #     "Allow": ["POST"]
+    # })
 
 def get(id: int):
     """
@@ -182,15 +192,25 @@ def put(id: int):
     image: str = request.json.get('image')
     location1: str = request.json.get('location1')
     location2: str = request.json.get('location2')
+    date: int = request.json.get('date')
 
     error = None
 
-    if title is description is image is location1 is location2 is None:
+    if title is description is image is location1 is location2 is date is None:
         error = 'No fields to update.'
     elif not title and title is not None:
         error = 'Item name is required.'
     elif not location1 and location1 is not None:
         error = 'Location 1 is required.'
+    elif (
+        type(title) not in (str, type(None))
+        or type(description) not in (str, type(None))
+        or type(image) not in (str, type(None))
+        or type(location1) not in (str, type(None))
+        or type(location2) not in (str, type(None))
+        or type(date) not in (int, type(None))
+    ):
+        error = "Type mismatch for JSON field(s) in PUT request"
 
     if error is not None:
         # HTTP 400: Bad Request
@@ -208,9 +228,10 @@ def put(id: int):
             + ('description = ?,' if description is not None else '')
             + ('image = ?,' if image is not None else '')
             + ('location1 = ?,' if location1 is not None else '')
-            + ('location2 = ?,' if location2 is not None else ''))[:-1]
+            + ('location2 = ?,' if location2 is not None else '')
+            + ('date = ?,' if date is not None else ''))[:-1]
             + ' WHERE id = ?',
-            tuple(x for x in (title, description, image, location1, location2, id) if x is not None)
+            tuple(x for x in (title, description, image, location1, location2, date, id) if x is not None)
         )
         db.commit()
         

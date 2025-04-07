@@ -2,6 +2,7 @@ import pytest
 from flask import Flask
 from flask.testing import FlaskClient
 from lostify.db import get_db
+from datetime import datetime
 
 def test_create(client: FlaskClient, app: Flask):
     # Test adding an item without authentication
@@ -11,7 +12,7 @@ def test_create(client: FlaskClient, app: Flask):
             'type': 0,
             'title': 'Test Item',
             'description': 'This is a test item.',
-            'location1': 'Test Location'
+            'location1': 'Test Location',
         }
     )
 
@@ -33,7 +34,9 @@ def test_create(client: FlaskClient, app: Flask):
             'type': 0,
             'title': 'Test Item',
             'description': 'This is a test item.',
-            'location1': 'Test Location'
+            'location1': 'Test Location',
+            'date': int(datetime.now().timestamp()),
+            'image': 'bIDsNSoAks-djeddneJED'
         },
         headers = {
             'Cookie': cookie
