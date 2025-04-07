@@ -19,10 +19,12 @@ def app():
 
     db_fd, db_path = tempfile.mkstemp()
 
-    app = create_app({
-        'TESTING': True,
-        'DATABASE': db_path,
-    })
+    from app import app
+    app.config.update(
+        TESTING = True,
+        SECRET_KEY = "dev",
+        DATABASE = db_path
+    )
 
     with app.app_context():
         init_db()
