@@ -37,4 +37,4 @@ tests can be run with [coverage](https://pypi.org/project/coverage/).
 ## Deployment
 
 The backend is currently deployed on Azure using Azure App Services with a 
-CI/CD pipeline that builds, lints, tests, and deploys any pushes to the branch.
+CI/CD pipeline that builds, tests, and deploys any pushes to the branch.
