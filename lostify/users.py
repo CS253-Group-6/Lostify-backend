@@ -111,7 +111,7 @@ def profile(id: int):
     #     "Allow": ["GET", "PUT"]
     # })
 
-@users_bp.route("/<int:id>/online", methods = ("PUT",))
+@users_bp.route("/<int:id>/online", methods = ("GET", "PUT"))
 def online(id: int):
     if g.user_id is None:
         # HTTP 401: Unauthorized
@@ -155,3 +155,20 @@ def online(id: int):
 
         # HTTP 204: No Content
         return ('', 204)
+    
+    if request.method == "GET":
+        # Any user can view any user's online status
+        db = get_db()
+        row = db.execute("SELECT online FROM profiles WHERE userid = ?", (id,)).fetchone()
+
+        if row is None:
+            # HTTP 404: Not Found
+            return ({
+                "error": "Not Found",
+                "message": "User not found"
+            }, 404)
+
+        # HTTP 200: OK
+        return ({
+            "online": bool(row["online"])
+        }, 200)
