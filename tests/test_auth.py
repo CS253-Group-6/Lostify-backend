@@ -22,7 +22,9 @@ def test_signup_get_otp(client: FlaskClient, app: Flask):
                 'phone': '+91 12345 67890',
                 'address': '123 Main St., City, Country',
                 'designation': 'Student',
-                'roll': 124
+                'roll': 124,
+                'playerId': '1234567890abcdefg',
+                'online': True
             }
         }
     )

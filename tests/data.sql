@@ -3,7 +3,7 @@ INSERT INTO users (id, username, password, role) VALUES
     (1, 'other', 'pbkdf2:sha256:50000$kJPKsz6N$d2d4784f1b030a9761f5ccaeeaca413f27f2ecb76d6168407af962ddce849f79', 1);
 
 INSERT INTO awaitOTP (username, password, otp, created, profile) VALUES
-    ('new', 'pbkdf2:sha256:50000$kJPKsz6N$d2d4784f1b030a9761f5ccaeeaca413f27f2ecb76d6168407af962ddce849f79', 827, 0, '{"name":"new_name","phone":"789","email":"new@example.com","address":"New location","designation":"Staff","roll":322424,"online":1}');
+    ('new', 'pbkdf2:sha256:50000$kJPKsz6N$d2d4784f1b030a9761f5ccaeeaca413f27f2ecb76d6168407af962ddce849f79', 827, 0, '{"name":"new_name","phone":"789","email":"new@example.com","address":"New location","designation":"Staff","roll":322424,"playerId":"rkmkrk4a","online":1}');
 
 INSERT INTO profiles (userid, name, phone, email, address, designation, roll, online) VALUES
     (0, 'test_name', '123', 'test@example.com', '10 Downing Street', 'Student', 23829, 1),
