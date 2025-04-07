@@ -1,5 +1,7 @@
 # Backend
 
+[![Build and deploy to Azure](https://github.com/CS253-Group-6/Lostify/actions/workflows/backend_lostify.yml/badge.svg)](https://github.com/CS253-Group-6/Lostify/actions/workflows/backend_lostify.yml)
+
 Lostify's backend exposes a RESTful API that can be called by the frontend.
 The backend is implemented using Flask, with SQLite3 for database management.
 
