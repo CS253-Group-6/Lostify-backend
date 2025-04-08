@@ -13,7 +13,106 @@ def send_otp(otp: int, email: str, recipient_display_name: str):
             "content": {
                 "subject": "Lostify: Sign up",
                 "plainText": f"LOSTIFY\n----------\nOTP for signup: {str(otp).zfill(4)}\nPlease enter this OTP to complete your signup.",
-                "html": f"<html><h1>Lostify</h1><p>OTP for signup: <b>{str(otp).zfill(4)}</b><p>Please enter this OTP to complete your signup.</html>"
+                "html": """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Lostify: Signup Verification</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    /* Global reset & font styling */
+    body, p, table, td {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      color: #333;
+    }
+
+    body {
+      background-color: #f2f2f2;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 40px auto;
+      background-color: #ffffff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .header {
+      background-color: rgb(146, 146, 252);
+      color: #ffffff;
+      padding: 20px;
+      text-align: center;
+      font-size: 1.5em;
+      font-weight: bold;
+    }
+
+    .content {
+      padding: 20px;
+    }
+
+    .title {
+      margin-top: 0;
+      font-size: 1.2em;
+      margin-bottom: 10px;
+    }
+
+    .highlight-code {
+      font-size: 1.8em;
+      font-weight: bold;
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    .footer {
+      font-size: 0.9em;
+      color: #777;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .footer p {
+      margin: 5px 0;
+    }
+  </style>
+</head>
+<body>
+  <table class="container" align="center" cellpadding="0" cellspacing="0">
+    <!-- HEADER SECTION -->
+    <tr>
+      <td class="header">
+        Lostify: Signup Verification
+      </td>
+    </tr>
+    
+    <!-- CONTENT SECTION -->
+    <tr>
+      <td class="content">
+        <p class="title">Hello, """ + recipient_display_name + """!</p>
+        <p>You&rsquo;ve requested to create an account for Lostify.</p>
+        <p>Please use the following verification code to complete the sign-up process:</p>
+        
+        <p class="highlight-code">""" + str(otp).zfill(4) + """</p>
+        
+        <p>This code is valid for 5 minutes and can only be used once.</p>
+        <p>If you didn&rsquo;t initiate the sign-up process, please ignore this email or contact support if you have concerns.</p>
+      </td>
+    </tr>
+
+    <tr>
+      <td class="footer">
+        <p>This is an automated message, please do not reply directly to this email.</p>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+"""
             },
             "recipients": {
                 "to": [
@@ -46,3 +145,6 @@ def send_otp(otp: int, email: str, recipient_display_name: str):
         print('Exception: ')
         print(ex)
         raise ex
+
+if __name__ == "__main__":
+    send_otp(847, 'anirudhcb23@iitk.ac.in', 'Anirudh C. Bijay')
