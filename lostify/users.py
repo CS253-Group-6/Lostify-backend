@@ -51,6 +51,12 @@ def profile(id: int):
         if name is None and phone is None and email is None and address is None and designation is None and roll is None and image is None:
             error = "At least one field is required"
 
+        if image is not None:
+            if not isinstance(image, str):
+                error = "Image must be a string"
+            else:
+                image = bytes(image, 'utf-8')
+
         if error is not None:
             # HTTP 400: Bad Request
             return ({
