@@ -2,21 +2,26 @@
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 # More info on Python, GitHub Actions, and Azure App Service: https://aka.ms/python-webapps-actions
 
-name: Build and deploy Python app to Azure Web App - lostify
+name: Build and deploy to Azure
 
+# Controls when the workflow will run
 on:
+  # Triggers the workflow on push events but only for the "backend" branch
   push:
     branches:
       - main
+
+  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read #This is required for actions/checkout
+      contents: read # This is required for actions/checkout
 
     steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
 
       - name: Set up Python version
@@ -30,12 +35,44 @@ jobs:
           source venv/bin/activate
       
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Create .env file
+        run: |
+          touch .env
+          echo "FLASK_SECRET_KEY=${{ secrets.FLASK_SECRET_KEY }}" > .env
+          echo "FLASK_DB_NAME=${{ vars.FLASK_DB_NAME }}" >> .env
+          echo "AZURE_CONNECTION_STRING=${{ secrets.AZURE_CONNECTION_STRING }}" >> .env
+          echo "AZURE_SENDER_EMAIL=${{ vars.AZURE_SENDER_EMAIL }}" >> .env
         
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
+      - name: Test with pytest
+        run: |
+          pip install pytest pytest-cov
+          python -m pytest tests/ --doctest-modules --junitxml=junit/test-results.xml --cov=. --cov-report=xml --cov-report=html
+
+      - name: Upload pytest test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-results
+          path: junit/test-results.xml
+        # Use always() to run this step to publish test results even when
+        # there are test failures. Without it, the job will be aborted as soon
+        # as a test fails.
+        if: ${{ always() }}
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: htmlcov/
+          overwrite: true
+        if: ${{ always() }}
 
       - name: Zip artifact for deployment
-        run: zip release.zip ./* -r
+        run: zip release.zip ./* .env -r
 
       - name: Upload artifact for deployment jobs
         uses: actions/upload-artifact@v4
