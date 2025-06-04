@@ -30,13 +30,13 @@ def get_otp():
     if request.method == 'POST':
         # The signup details are transmitted through POST
         try:
-            username: str   = request.json["username"]      # Username
-            password: str   = request.json["password"]      # Plaintext password
+            username: str  = request.json["username"]      # Username
+            password: str  = request.json["password"]      # Plaintext password
 
             # If the request is sent through Basic Auth, use the following:
             # username: str = request.authorization["username"]   # Username
             # password: int = request.authorization["password"]   # Password
-            profile : dict  = request.json["profile"]       # Profile details (as a `dict`)
+            profile : dict = request.json["profile"]       # Profile details (as a `dict`)
         except KeyError as e:
             # HTTP 400: Bad Request
             return ({
@@ -83,8 +83,6 @@ def get_otp():
             error = "Username is required."
         elif not password:
             error = "Password is required."
-        # TODO: Similar checks for compulsory profile fields.
-
         
         if error is not None:
             # HTTP 400: Bad Request
@@ -288,7 +286,6 @@ def verify_otp():
                 "profile": profile
             }
         }, 201, {
-            # TODO: Fix the URL
             "Location": '' # f"{url_for(f'user.profile', id = user_id)}"
         })
     
