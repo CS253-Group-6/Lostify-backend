@@ -1,6 +1,6 @@
 # Backend
 
-[![Build and deploy to Azure](https://github.com/CS253-Group-6/Lostify-backend/actions/workflows/main_lostify.yml/badge.svg)](https://github.com/CS253-Group-6/Lostify-backend/actions/workflows/main_lostify.yml) [![CodeFactor](https://www.codefactor.io/repository/github/cs253-group-6/lostify-backend/badge)](https://www.codefactor.io/repository/github/cs253-group-6/lostify-backend)
+[![Build and deploy to Azure](https://github.com/CS253-Group-6/Lostify-backend/actions/workflows/main_lostify.yml/badge.svg)](https://github.com/CS253-Group-6/Lostify-backend/actions/workflows/main_lostify.yml) [![CodeFactor](https://www.codefactor.io/repository/github/cs253-group-6/lostify-backend/badge)](https://www.codefactor.io/repository/github/cs253-group-6/lostify-backend) [![codecov](https://codecov.io/gh/CS253-Group-6/Lostify-backend/graph/badge.svg?token=SLOANDSHMC)](https://codecov.io/gh/CS253-Group-6/Lostify-backend)
 
 Lostify's backend exposes a RESTful API that can be called by the frontend.
 The backend is implemented using Flask, with SQLite3 for database management.
