@@ -144,6 +144,3 @@ def send_password(password: str, email: str, recipient_display_name: str):
         print('Exception: ')
         print(ex)
         raise ex
-
-if __name__ == '__main__':
-    send_password('ijdEJF9-483n333+3jd', 'anirudhcb23@iitk.ac.in', 'Anirudh C. Bijay')

@@ -51,12 +51,33 @@ def test_signup_get_otp(client: FlaskClient, app: Flask):
         'roll': 124,
         'online': False,
         'playerId': '1234567890abcdefg'
-    }, 409)
+    }, 409),
+    (None, 'test', {}, 400),
+    ('#!2a', 'test', {
+        'name': 'First M. Last',
+        'email': 'uname25@example.com',
+        'phone': '+91 12345 67890',
+        'address': '123 Main St., City, Country',
+        'designation': 'Student',
+        'roll': 124,
+        'online': False,
+        'playerId': '1234567890abcdefg'
+    }, 400),
+    ('test', '', {
+        'name': 'First M. Last',
+        'email': 'uname25@example.com',
+        'phone': '+91 12345 67890',
+        'address': '123 Main St., City, Country',
+        'designation': 'Student',
+        'roll': 124,
+        'online': False,
+        'playerId': '1234567890abcdefg'
+    }, 400),
 ))
 def test_signup_get_otp_validate_input(client: FlaskClient, username, password, profile, status):
     response = client.post(
         '/auth/signup/get_otp',
-        json = {'username': username, 'password': password, 'profile': profile}
+        json = {'username': username, 'password': password, 'profile': profile} if username is not None else {'password': password, 'profile': profile}
     )
 
     assert response.status_code == status
@@ -212,6 +233,20 @@ def test_login_validate_input(client: FlaskClient, app: Flask, username, passwor
             assert db.execute(
                 "SELECT counter FROM users WHERE username = 'test'",
             ).fetchone()[0] == 1
+    elif username == '':
+        response = client.post(
+            '/auth/login',
+            json = {'password': password}
+        )
+
+        assert response.status_code == status
+    elif password == '':
+        response = client.post(
+            '/auth/login',
+            json = {'username': username}
+        )
+
+        assert response.status_code == status
 
 def test_logout(client: FlaskClient):
     response = client.get('/auth/logout')
@@ -271,6 +306,34 @@ def test_change_password(client: FlaskClient, app: Flask):
     )
 
     assert response.status_code == 401
+
+    # Test with empty new password
+    response = client.post(
+        '/auth/change_password',
+        json = {
+            'old_password': 'a',
+            'new_password': ''
+        },
+        headers = {
+            'Cookie': cookie
+        }
+    )
+
+    assert response.status_code == 400
+
+    # Test with empty old password
+    response = client.post(
+        '/auth/change_password',
+        json = {
+            'old_password': '',
+            'new_password': '12'
+        },
+        headers = {
+            'Cookie': cookie
+        }
+    )
+
+    assert response.status_code == 400
 
 def test_reset_password(client: FlaskClient):
     # NOTE: This test may be commented out because it sends an actual email.

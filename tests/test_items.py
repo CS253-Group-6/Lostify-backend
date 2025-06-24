@@ -56,7 +56,7 @@ def test_create(client: FlaskClient, app: Flask):
 @pytest.mark.parametrize(('type', 'title', 'location1'), (
     (2, '', 'Test Location'),
     (1, 'Title', ''),
-    (0, None, None)
+    (0, 25, None)
 ))
 def test_create_validate_input(client: FlaskClient, type, title, location1):
     # Authenticate
@@ -74,7 +74,9 @@ def test_create_validate_input(client: FlaskClient, type, title, location1):
         json = {
             'type': type,
             'title': title,
-            'location1': location1
+            'location1': location1,
+            'date': int(datetime.now().timestamp()),
+            'posttype': 1
         },
         headers = {
             'Cookie': cookie
@@ -609,3 +611,71 @@ def test_claim(client: FlaskClient, app: Flask):
             "SELECT closedBy FROM posts WHERE id = ?",
             (7,)
         ).fetchone()[0] == 0  # ID of user 'test'
+
+    # Test claiming item, direction 2
+    response = client.post(
+        '/items/8/claim',
+        json = {
+            'otherid': 0
+        },
+        headers = {
+            'Cookie': cookie
+        }
+    )
+
+    assert response.status_code == 200
+    assert response.json['closed'] == False
+
+    with app.app_context():
+        assert get_db().execute(
+            "SELECT 1 FROM confirmations WHERE postid = ?",
+            (8,)
+        ).fetchone() is not None
+
+        # The action should not close the post
+        assert get_db().execute(
+            "SELECT closedBy FROM posts WHERE id = ?",
+            (8,)
+        ).fetchone()[0] is None
+
+    # Authenticate
+    cookie = client.post(
+        '/auth/login',
+        json = {
+            'username': 'test',
+            'password': 'test'
+        }
+    ).headers['Set-Cookie']
+
+    # Test claiming item, direction 1
+    response = client.post(
+        '/items/8/claim',
+        headers = {
+            'Cookie': cookie
+        }
+    )
+
+    assert response.status_code == 200
+    assert response.json['closed'] == True
+
+    with app.app_context():
+        assert get_db().execute(
+            "SELECT 1 FROM confirmations WHERE postid = ?",
+            (8,)
+        ).fetchone() is None
+
+        # The action should close the post
+        assert get_db().execute(
+            "SELECT closedBy FROM posts WHERE id = ?",
+            (8,)
+        ).fetchone()[0] == 0  # ID of user 'test'
+
+    # Test conflict
+    response = client.post(
+        '/items/7/claim',
+        headers = {
+            'Cookie': cookie
+        }
+    )
+
+    assert response.status_code == 409

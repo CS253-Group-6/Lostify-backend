@@ -188,6 +188,16 @@ def test_get_online_status(client: FlaskClient, app: Flask):
             "SELECT online FROM profiles WHERE userid = 1"
         ).fetchone()[0])
 
+    # Test fetching non-existent user's online status
+    response = client.get(
+        "/users/100/online",
+        headers = {
+            "Cookie": cookie
+        }
+    )
+
+    assert response.status_code == 404
+
 def test_update_online_status(client: FlaskClient, app: Flask):
     # Test updating an online status without authentication
     response = client.put(

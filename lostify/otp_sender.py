@@ -145,6 +145,3 @@ def send_otp(otp: int, email: str, recipient_display_name: str):
         print('Exception: ')
         print(ex)
         raise ex
-
-if __name__ == "__main__":
-    send_otp(847, 'anirudhcb23@iitk.ac.in', 'Anirudh C. Bijay')
